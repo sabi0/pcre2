@@ -233,6 +233,12 @@ sure both macros are undefined; an emulation function will then be used. */
 #define PCRE2GREP_BUFSIZE 20480
 #endif
 
+/* The value of PCRE2GREP_MAX_BUFFER_SIZE determines the maximum size the buffer
+   is allowed to grow up to. */
+#ifndef PCRE2GREP_MAX_BUFFER_SIZE
+#define PCRE2GREP_MAX_BUFFER_SIZE 1048576
+#endif
+
 /* Define to any value to include debugging code. */
 /* #undef PCRE2_DEBUG */
 
