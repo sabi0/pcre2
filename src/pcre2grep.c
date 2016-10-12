@@ -158,15 +158,15 @@ static const char *jfriedl_prefix = "";
 static const char *jfriedl_postfix = "";
 #endif
 
-static char *colour_string = (char *)"1;31";
-static char *colour_option = NULL;
-static char *dee_option = NULL;
-static char *DEE_option = NULL;
-static char *locale = NULL;
+static const char *colour_string = (char *)"1;31";
+static const char *colour_option = NULL;
+static const char *dee_option = NULL;
+static const char *DEE_option = NULL;
+static const char *locale = NULL;
 static char *main_buffer = NULL;
-static char *newline_arg = NULL;
-static char *om_separator = (char *)"";
-static char *stdin_name = (char *)"(standard input)";
+static const char *newline_arg = NULL;
+static const char *om_separator = (char *)"";
+static const char *stdin_name = (char *)"(standard input)";
 
 static int after_context = 0;
 static int before_context = 0;
@@ -414,6 +414,16 @@ of PCRE2_NEWLINE_xx in pcre2.h. */
 
 static const char *newlines[] = {
   "DEFAULT", "CR", "LF", "CRLF", "ANY", "ANYCRLF" };
+
+static const char *separators[] = {
+  "TAB", "\t",
+  "CR", "\r",
+  "LF", "\n",
+  "CRLF", "\r\n",
+  "SPACE", " ",
+  "NONE", "",
+  "EMPTY", ""
+};
 
 /* Tables for prefixing and suffixing patterns, according to the -w, -x, and -F
 options. These set the 1, 2, and 4 bits in process_options, respectively. Note
@@ -1423,7 +1433,7 @@ Returns:            nothing
 
 static void
 do_after_lines(int lastmatchnumber, char *lastmatchrestart, char *endptr,
-  char *printname)
+  const char *printname)
 {
 if (after_context > 0 && lastmatchnumber > 0)
   {
@@ -1829,7 +1839,7 @@ Returns:       0 if there was at least one match
 */
 
 static int
-pcre2grep(void *handle, int frtype, char *filename, char *printname)
+pcre2grep(void *handle, int frtype, const char *filename, const char *printname)
 {
 int rc = 1;
 int linenumber = 1;
@@ -2894,7 +2904,7 @@ read_pattern_file(char *name, patstr **patptr, patstr **patlastptr, int popts)
 {
 int linenumber = 0;
 FILE *f;
-char *filename;
+const char *filename;
 char buffer[PATBUFSIZE];
 
 if (strcmp(name, "-") == 0)
@@ -3418,6 +3428,21 @@ if (newline_arg != NULL)
 else
   {
   (void)pcre2_config(PCRE2_CONFIG_NEWLINE, &endlinetype);
+  }
+
+/* Interpret the names for --om-separator */
+
+if (*om_separator)
+  {
+  int i;
+  for (i = 0; i < (int)(sizeof(separators)/sizeof(char *)); i += 2)
+    {
+    if (strcmpic(om_separator, separators[i]) == 0)
+      {
+      om_separator = separators[i + 1];
+      break;
+      }
+    }
   }
 
 /* Interpret the text values for -d and -D */
