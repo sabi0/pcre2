@@ -3455,6 +3455,7 @@ if (colour_option != NULL && strcmp(colour_option, "never") != 0)
     {
     char *cs = getenv("PCRE2GREP_COLOUR");
     if (cs == NULL) cs = getenv("PCRE2GREP_COLOR");
+    if (cs == NULL) cs = getenv("GREP_COLOR");
     if (cs != NULL) colour_string = cs;
 
 #if defined HAVE_WINDOWS_H && HAVE_WINDOWS_H
